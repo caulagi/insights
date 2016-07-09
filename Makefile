@@ -15,7 +15,7 @@ test: $(REBAR)
 	$(REBAR) cover
 
 doc: $(REBAR)
-	$(REBAR) as dev edoc
+	$(REBAR) edoc
 
 clean: $(REBAR)
 	$(REBAR) as dev clean
