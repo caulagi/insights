@@ -1,8 +1,8 @@
-{application, ins,
+{application, insights,
  [{description, "An OTP application"},
   {vsn, "0.1.0"},
   {registered, []},
-  {mod, { ins_app, []}},
+  {mod, { insights_app, []}},
   {applications,
    [kernel,
     stdlib

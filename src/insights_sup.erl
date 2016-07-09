@@ -1,9 +1,9 @@
 %%%-------------------------------------------------------------------
-%% @doc ins top level supervisor.
+%% @doc insights top level supervisor.
 %% @end
 %%%-------------------------------------------------------------------
 
--module(ins_sup).
+-module(insights_sup).
 
 -behaviour(supervisor).
 

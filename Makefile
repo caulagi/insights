@@ -8,7 +8,7 @@ compile: $(REBAR)
 	$(REBAR) as dev compile
 
 run: $(REBAR)
-	@$(REBAR) as dev shell --apps pooler --config config/demo.config
+	@$(REBAR) as dev shell --apps insights
 
 test: $(REBAR)
 	$(REBAR) eunit --cover skip_deps=true verbose=3
