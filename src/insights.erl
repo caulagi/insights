@@ -7,8 +7,8 @@
 
 -export([start_link/0]).
 
--export([store/1,
-         summarize/1]).
+-export([store/2,
+         summarize/2]).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Exports
@@ -21,8 +21,7 @@
          terminate/2,
          code_change/3]).
 
-%% @doc Start the application. Mainly useful for using `-s insights' as a command
-%% line switch to the VM to make lager start on boot.
+%% @doc Start the application.
 start_link() ->
     gen_server:start_link({local, insights}, insights, [], []).
 
@@ -30,14 +29,22 @@ start_link() ->
 %% API Function Definitions
 %% ------------------------------------------------------------------
 
-store(Key) ->
-    Key,
-    io:fwrite("----     store   ------\n"),
-    ok.
-    
-summarize(Key) ->
-    Key,
-    io:fwrite("----     summarize   ------\n"),
+%% @doc The api endpoint to hold event details in memory till it is flushed to
+%% database
+store(Event, State) ->
+    Current = maps:get(Event, State, 0),
+    maps:put(Event, Current + 1, State).
+
+%% @doc The api endpoint to get summary about an event
+summarize(Event, State) ->
+    maps:get(Event, State, 0).
+
+%% ------------------------------------------------------------------
+%% private api
+%% ------------------------------------------------------------------
+
+%% @doc Write the memory contents to database
+flush() ->
     ok.
 
 %% ------------------------------------------------------------------
@@ -46,10 +53,10 @@ summarize(Key) ->
 
 init([]) -> {ok, []}. %% no treatment of info here!
 
-handle_call({store, Key}, _From, State) ->
-    Key,
-    {reply, ok, State}.
-
+handle_call({store, Event}, _From, State) ->
+    {reply, ok, store(Event, State)};
+handle_call({summarize, Event}, _From, State) ->
+    {reply, ok, summarize(Event, State)}.
 
 handle_cast({return, Key}, Key) ->
     {noreply, Key}.
@@ -64,4 +71,4 @@ terminate(_Reason, _State) ->
 code_change(_OldVsn, State, _Extra) ->
     %% No change planned. The function is there for the behaviour,
     %% but will not be used. Only a version on the next
-    {ok, State}. 
+    {ok, State}.
