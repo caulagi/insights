@@ -71,7 +71,7 @@ handle_call(summary, _From, State) ->
     {reply, State, State}.
 
 handle_cast(_, State) ->
-    {error, State}.
+    {noreply, State}.
 
 handle_info(Msg, State) ->
     io:format("Unexpected message: ~p~n",[Msg]),
