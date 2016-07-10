@@ -19,6 +19,7 @@
 -export([start_link/0]).
 
 -export([store/1,
+         summarize/0,
          summarize/1]).
 
 %% ------------------------------------------------------------------
@@ -45,6 +46,11 @@ start_link() ->
 store(Event) ->
     gen_server:call(?MODULE, {add_event, Event}).
 
+%% @doc summarize/0 returns summary about all events
+%% @end
+summarize() ->
+    gen_server:call(?MODULE, summary).
+
 %% @doc summarize/1 returns the summary about this event
 %% @end
 summarize(Event) ->
@@ -60,7 +66,9 @@ handle_call({add_event, Event}, _From, State) ->
     Current = maps:get(Event, State, 0),
     {reply, ok, maps:put(Event, Current + 1, State)};
 handle_call({summary, Event}, _From, State) ->
-    {reply, maps:get(Event, State, 0), State}.
+    {reply, maps:get(Event, State, 0), State};
+handle_call(summary, _From, State) ->
+    {reply, State, State}.
 
 handle_cast(_, State) ->
     {error, State}.
