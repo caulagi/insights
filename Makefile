@@ -12,7 +12,6 @@ run: $(REBAR)
 
 test: $(REBAR)
 	$(REBAR) eunit --cover skip_deps=true verbose=3
-	$(REBAR) cover
 
 doc: $(REBAR)
 	$(REBAR) edoc
