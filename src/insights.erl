@@ -1,3 +1,14 @@
+%% @doc API for the insights application
+%%
+%% This module provide the API for the insights application.
+%% It supports two ways of interacting -
+%%
+%% <ul>
+%% <li>store/1</li>
+%% <li>summarize/1</li>
+%% </ul>
+%%
+
 -module(insights).
 -behaviour(gen_server).
 
@@ -16,6 +27,7 @@
 
 -export([init/1,
          handle_call/3,
+         handle_cast/2,
          handle_info/2,
          terminate/2,
          code_change/3]).
@@ -28,12 +40,13 @@ start_link() ->
 %% API Function Definitions
 %% ------------------------------------------------------------------
 
-%% @doc The api endpoint to hold event details in memory till it is flushed to
-%% database
+%% @doc store/1 updates the state with the event information
+%% @end
 store(Event) ->
     gen_server:call(?MODULE, {add_event, Event}).
 
-%% @doc The api endpoint to get summary about an event
+%% @doc summarize/1 returns the summary about this event
+%% @end
 summarize(Event) ->
     gen_server:call(?MODULE, {summary, Event}).
 
@@ -48,6 +61,9 @@ handle_call({add_event, Event}, _From, State) ->
     {reply, ok, maps:put(Event, Current + 1, State)};
 handle_call({summary, Event}, _From, State) ->
     {reply, maps:get(Event, State, 0), State}.
+
+handle_cast(_, State) ->
+    {error, State}.
 
 handle_info(Msg, State) ->
     io:format("Unexpected message: ~p~n",[Msg]),
