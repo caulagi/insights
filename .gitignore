@@ -14,4 +14,3 @@ erl_crash.dump
 .rebar
 logs
 _build
-doc
