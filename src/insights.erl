@@ -7,8 +7,8 @@
 
 -export([start_link/0]).
 
--export([store/2,
-         summarize/2]).
+-export([store/1,
+         summarize/1]).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Exports
@@ -31,32 +31,24 @@ start_link() ->
 
 %% @doc The api endpoint to hold event details in memory till it is flushed to
 %% database
-store(Event, State) ->
-    Current = maps:get(Event, State, 0),
-    maps:put(Event, Current + 1, State).
+store(Event) ->
+    gen_server:call(?MODULE, {add_event, Event}).
 
 %% @doc The api endpoint to get summary about an event
-summarize(Event, State) ->
-    maps:get(Event, State, 0).
-
-%% ------------------------------------------------------------------
-%% private api
-%% ------------------------------------------------------------------
-
-%% @doc Write the memory contents to database
-flush() ->
-    ok.
+summarize(Event) ->
+    gen_server:call(?MODULE, {summary, Event}).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
 %% ------------------------------------------------------------------
 
-init([]) -> {ok, []}. %% no treatment of info here!
+init([]) -> {ok, maps:new()}. %% no treatment of info here!
 
-handle_call({store, Event}, _From, State) ->
-    {reply, ok, store(Event, State)};
-handle_call({summarize, Event}, _From, State) ->
-    {reply, ok, summarize(Event, State)}.
+handle_call({add_event, Event}, _From, State) ->
+    Current = maps:get(Event, State, 0),
+    {reply, ok, maps:put(Event, Current + 1, State)};
+handle_call({summary, Event}, _From, State) ->
+    {reply, ok, maps:get(Event, State, 0)}.
 
 handle_cast({return, Key}, Key) ->
     {noreply, Key}.
