@@ -1,0 +1,7 @@
+*** TODO Store events in a datastore (mysql?)
+*** TODO Batch writes - hold events in memory which is flushed to datastore
+  every few seconds.
+*** TODO Add a client that can be used to benchmark performance of gen_server
+  (number of messages per second)
+*** TODO Summarise should read data from store and merge with data from
+  memory.
